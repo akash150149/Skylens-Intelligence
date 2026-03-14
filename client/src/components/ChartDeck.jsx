@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { decodeChart } from '../api';
 
 const ChartDeck = ({ onChartDecoded }) => {
   const [loading, setLoading] = useState(false);
@@ -17,16 +18,7 @@ const ChartDeck = ({ onChartDecoded }) => {
     formData.append('chart', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/decode-chart', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to process image');
-      }
-
-      const rawData = await response.json();
+      const rawData = await decodeChart(formData);
       onChartDecoded(rawData); // We pass it back to App.js
 
     } catch (err) {
