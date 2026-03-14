@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
@@ -10,15 +11,29 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Set up Multer for memory storage (we will pass buffer to Gemini)
+const upload = multer({ storage: multer.memoryStorage() });
+
 // Initialize legacy Gemini SDK with API Version override for Gemini 3
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 genAI.apiKey = process.env.GEMINI_API_KEY; // Force key
+
+// Weather dispatcher model
 const model = genAI.getGenerativeModel(
   { 
     model: "gemini-3-flash-preview",
     systemInstruction: "You are a Senior Flight Dispatcher. You analyze METAR/TAF data and charts with absolute precision. Never hallucinate. If a chart is too blurry, admit it. Always return clear, technical explanations suitable for pilots."
   },
   { apiVersion: 'v1alpha' } // This is the fix for the 404 error
+);
+
+// Chart decoder model instance 
+const chartDecoderModel = genAI.getGenerativeModel(
+  {
+    model: "gemini-3-flash-preview",
+    systemInstruction: "You are a Senior Flight Dispatcher. Extract the following from this chart: 1. Airport Identity (Name/ICAO), 2. Communication Frequencies, 3. Critical Altitudes (MSA/Decision Height), 4. Any Special Notes (NOTAMs mentioned). Return this as a clean JSON object without any markdown wrapping (just the pure raw JSON object)."
+  },
+  { apiVersion: 'v1alpha' }
 );
 
 // CheckWX API key
@@ -98,6 +113,64 @@ app.get('/api/weather/:icao', async (req, res) => {
     
     res.status(500).json({ 
       error: 'Failed to fetch weather',
+      details: error.message
+    });
+  }
+});
+
+// POST Decode Chart Endpoint
+app.post('/api/decode-chart', upload.single('chart'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No chart image uploaded. Provide an image in the "chart" field.' });
+  }
+
+  try {
+    const mimeType = req.file.mimetype;
+    const base64Data = req.file.buffer.toString('base64');
+    
+    console.log(`Decoding chart upload [Size: ${req.file.size} bytes, Type: ${mimeType}]`);
+
+    const imageParts = [
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: mimeType
+        }
+      }
+    ];
+
+    const result = await chartDecoderModel.generateContent([
+      "Analyze the uploaded chart and extract the requested fields into JSON format.", 
+      ...imageParts
+    ]);
+    
+    const responseText = result.response.text();
+    
+    // Attempt to parse out markdown formatting if somehow it ignores the system instruction
+    let jsonString = responseText;
+    if (jsonString.startsWith('```json')) jsonString = jsonString.slice(7);
+    if (jsonString.startsWith('```')) jsonString = jsonString.slice(3);
+    if (jsonString.endsWith('```')) jsonString = jsonString.slice(0, -3);
+    
+    const parsedData = JSON.parse(jsonString.trim());
+
+    res.json(parsedData);
+    
+  } catch (error) {
+    const errorDetails = {
+      message: error.message,
+      name: error.name,
+      status: error.status,
+      stack: error.stack,
+      rawObject: error
+    };
+    require('fs').writeFileSync('./debug.json', JSON.stringify(errorDetails, null, 2));
+    
+    console.error('--- CHART DECODER ERROR CAUGHT ---');
+    console.error(error.message);
+    
+    res.status(500).json({
+      error: 'Failed to decode chart',
       details: error.message
     });
   }

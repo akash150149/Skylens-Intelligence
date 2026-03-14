@@ -11,6 +11,10 @@
 }
 
 @layer components {
+  .crt-glow {
+    text-shadow: 0 0 5px rgba(16, 185, 129, 0.6), 0 0 10px rgba(16, 185, 129, 0.4), 0 0 15px rgba(16, 185, 129, 0.2);
+  }
+
   .hud-card {
     @apply bg-aviation-slate/40 border border-aviation-emerald/30 backdrop-blur-md rounded-lg p-6 shadow-hud-glow transition-all duration-300;
   }

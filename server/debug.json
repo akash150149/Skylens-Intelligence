@@ -1,0 +1,10 @@
+{
+  "message": "[GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1alpha/models/gemini-3-flash-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+  "name": "Error",
+  "status": 403,
+  "stack": "Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1alpha/models/gemini-3-flash-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.\n    at handleResponseNotOk (D:\\vscode\\Aerolens\\server\\node_modules\\@google\\generative-ai\\dist\\index.js:434:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async makeRequest (D:\\vscode\\Aerolens\\server\\node_modules\\@google\\generative-ai\\dist\\index.js:403:9)\n    at async generateContent (D:\\vscode\\Aerolens\\server\\node_modules\\@google\\generative-ai\\dist\\index.js:867:22)\n    at async D:\\vscode\\Aerolens\\server\\server.js:142:20",
+  "rawObject": {
+    "status": 403,
+    "statusText": "Forbidden"
+  }
+}
