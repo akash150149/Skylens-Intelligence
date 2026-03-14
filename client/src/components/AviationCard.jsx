@@ -20,40 +20,40 @@ const AviationCard = ({ data, loading }) => {
   const statusColor = categoryColors[data.category] || 'border-aviation-emerald text-aviation-emerald';
 
   return (
-    <div className={`hud-card border-2 ${statusColor}`}>
-      <div className="flex justify-between items-start mb-4">
+    <div className={`hud-card border-2 mx-2 sm:mx-0 p-4 sm:p-6 ${statusColor}`}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
         <div>
-          <h2 className="text-2xl font-bold tracking-tighter">{data.icao}</h2>
-          <p className="text-xs opacity-70 uppercase">Weather Briefing</p>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter">{data.icao}</h2>
+          <p className="text-[10px] sm:text-xs opacity-70 uppercase">Weather Briefing</p>
         </div>
-        <div className={`px-3 py-1 rounded text-xs font-bold bg-black/40 border border-current`}>
+        <div className={`px-3 py-1 sm:py-1.5 rounded text-[10px] sm:text-xs font-bold bg-black/40 border border-current tracking-widest self-start sm:self-auto`}>
           {data.category}
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5 sm:space-y-6">
         <div>
-          <label className="text-[10px] uppercase tracking-widest opacity-50 block mb-1">Raw METAR</label>
-          <p className="text-sm font-mono bg-black/30 p-2 rounded border border-aviation-emerald/10">
+          <label className="text-[9px] sm:text-[10px] uppercase tracking-widest opacity-50 block mb-1.5 sm:mb-2">Raw METAR</label>
+          <p className="text-xs sm:text-sm font-mono bg-black/30 p-2 sm:p-3 rounded border border-aviation-emerald/10 break-words leading-relaxed">
             {data.raw}
           </p>
         </div>
 
         <div>
-          <label className="text-[10px] uppercase tracking-widest opacity-50 block mb-1">Dispatcher Analysis</label>
-          <p className="text-sm italic leading-relaxed">
+          <label className="text-[9px] sm:text-[10px] uppercase tracking-widest opacity-50 block mb-1.5 sm:mb-2">Dispatcher Analysis</label>
+          <p className="text-[13px] sm:text-sm italic leading-relaxed opacity-90">
             "{data.brief}"
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 pt-2 border-t border-aviation-emerald/10">
-          <div>
-            <label className="text-[10px] uppercase opacity-50 block">Wind</label>
-            <span className="text-lg">{data.wind || '0'} KTS</span>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-4 border-t border-aviation-emerald/10">
+          <div className="bg-black/20 p-2 sm:p-3 rounded">
+            <label className="text-[9px] sm:text-[10px] uppercase tracking-widest opacity-50 block mb-1">Wind</label>
+            <span className="text-base sm:text-lg font-bold">{data.wind || '0'} <span className="text-xs font-normal opacity-70">KTS</span></span>
           </div>
-          <div>
-            <label className="text-[10px] uppercase opacity-50 block">Visibility</label>
-            <span className="text-lg">{data.visibility || '10+'} SM</span>
+          <div className="bg-black/20 p-2 sm:p-3 rounded">
+            <label className="text-[9px] sm:text-[10px] uppercase tracking-widest opacity-50 block mb-1">Visibility</label>
+            <span className="text-base sm:text-lg font-bold">{data.visibility || '10+'} <span className="text-xs font-normal opacity-70">SM</span></span>
           </div>
         </div>
       </div>
