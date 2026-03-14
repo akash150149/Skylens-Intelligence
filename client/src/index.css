@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-aviation-black text-aviation-emerald font-hud;
+  }
+}
+
+@layer components {
+  .hud-card {
+    @apply bg-aviation-slate/40 border border-aviation-emerald/30 backdrop-blur-md rounded-lg p-6 shadow-hud-glow transition-all duration-300;
+  }
+  
+  .hud-input {
+    @apply bg-aviation-black/50 border border-aviation-emerald/40 text-aviation-emerald p-2 rounded focus:outline-none focus:border-aviation-emerald shadow-inner;
+  }
+  
+  .hud-button {
+    @apply bg-aviation-emerald/20 border border-aviation-emerald text-aviation-emerald px-4 py-2 rounded hover:bg-aviation-emerald hover:text-aviation-black transition-colors duration-200 uppercase tracking-widest text-sm font-bold;
+  }
+}
